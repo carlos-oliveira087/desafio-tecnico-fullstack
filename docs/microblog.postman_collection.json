@@ -1,0 +1,257 @@
+{
+	"info": {
+		"_postman_id": "9ea953f8-cace-43bf-b073-aac7d0790860",
+		"name": "Microblog API",
+		"description": "Esta coleção contém todos os endpoints da **API do Microblog**, um sistema que permite aos usuários criar, editar, visualizar e deletar posts, além de gerenciar contas de usuário com autenticação segura.\n\n### Funcionalidades incluídas:\n\n- **Cadastro de usuários:** Criação de novos usuários com validação de email, senha segura e possibilidade de foto de perfil ou Gravatar.\n    \n- **Login e Logout:** Autenticação via **Laravel Sanctum** com geração de token.\n    \n- **Posts:**\n    \n    - Criação de posts públicos e privados (visíveis apenas para usuários logados).\n        \n    - Edição e exclusão de posts próprios.\n        \n    - Listagem de todos os posts.\n        \n- **Usuários:**\n    \n    - Listar usuários cadastrados.\n        \n    - Visualizar detalhes de um usuário específico.\n        \n\n### Observações importantes:\n\n- A autenticação é necessária para todos os endpoints que modificam dados (`POST`, `PUT`, `DELETE`).\n    \n- Tokens de autenticação devem ser adicionados no cabeçalho `Authorization` no formato: `Bearer {{TOKEN}}`.\n    \n- Os endpoints estão preparados para **WebSockets via Pusher**, possibilitando feed de posts em tempo real.\n    \n\n### Variáveis de Ambiente:\n\n- `BASE_URL` → URL base da API (ex: `http://localhost:8000/api`).\n    \n- `TOKEN` → Token gerado ao fazer login.\n    \n- `USUARIO_ID` → ID do usuário logado (usado para criar posts).\n    \n- `POST_ID` → ID do post criado (usado para edição ou exclusão).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38285249"
+	},
+	"item": [
+		{
+			"name": "Registrar Usuário",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Novo Usuario\",\r\n  \"email\": \"novo@teste.com\",\r\n  \"senha\": \"senha123!\",\r\n  \"senha_confirmation\": \"senha123!\",\r\n  \"foto_perfil\": null\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/usuarios"
+			},
+			"response": []
+		},
+		{
+			"name": "Login do Usuário",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    const data = pm.response.json();\r",
+							"\r",
+							"    pm.collectionVariables.set(\"TOKEN\", data.token);\r",
+							"\r",
+							"    pm.collectionVariables.set(\"USUARIO_ID\", data.usuario.id);\r",
+							"\r",
+							"    console.log(\"Token e usuário salvos nas variáveis da coleção!\");\r",
+							"} else {\r",
+							"    console.log(\"Login falhou\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"novo@teste.com\",\r\n  \"senha\": \"senha123!\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Usuários",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": "{{BASE_URL}}/usuarios"
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Posts",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": "{{BASE_URL}}/posts"
+			},
+			"response": []
+		},
+		{
+			"name": "Criar Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"POST_ID\", responseData.id);\r",
+							"\r",
+							"console.log(\"Post ID salvo:\", pm.environment.get(\"POST_ID\"));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"conteudo\": \"Meu primeiro post\",\r\n  \"usuario_id\": \"{{USUARIO_ID}}\",\r\n  \"post_privado\": false\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/posts"
+			},
+			"response": []
+		},
+		{
+			"name": "Editar Post",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"conteudo\": \"Conteúdo atualizado do post\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/posts/{{POST_ID}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Deletar Post",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": "{{BASE_URL}}/posts/{{POST_ID}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Logout do Usuário",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": "{{BASE_URL}}/logout"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": ""
+		},
+		{
+			"key": "TOKEN",
+			"value": ""
+		},
+		{
+			"key": "USUARIO_ID",
+			"value": ""
+		},
+		{
+			"key": "POST_ID",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
