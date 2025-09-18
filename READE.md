@@ -9,7 +9,6 @@ Um microblog interativo desenvolvido com **React** no frontend e **Laravel** no 
 - **Tailwind CSS** - Framework CSS para estilização
 - **Framer Motion** - Animações e transições suaves
 - **React Icons** - Ícones para botões e elementos visuais
-- **Axios** - Consumo de API para comunicação com backend
 
 ### Backend
 - **PHP 8+** com **Laravel 10**
