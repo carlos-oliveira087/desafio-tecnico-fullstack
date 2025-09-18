@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Events\PostCreated;
+use App\Events\PostUpdated;
+use App\Events\PostDeleted;
 
 class PostController extends Controller
 {
@@ -27,6 +30,7 @@ class PostController extends Controller
         ]);
 
         $post->load('usuario');
+        event(new PostCreated($post));
 
         return response()->json($post, 201);
     }
@@ -39,6 +43,8 @@ class PostController extends Controller
     public function destroy($id)
     {
         Post::destroy($id);
+
+        event(new PostDeleted($id));
 
         return response()->json(null, 204);
     }
@@ -53,6 +59,9 @@ class PostController extends Controller
 
         $post->conteudo = $request->conteudo;
         $post->save();
+        $post->load('usuario');
+
+        event(new PostUpdated($post));
 
         return response()->json($post);
     }

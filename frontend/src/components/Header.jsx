@@ -12,7 +12,7 @@ export default function Header() {
 				<a href="/">
 					<div className='flex flex-row items-center gap-4'>
 						<img src="../../public/logo.png" alt="Microblog" className='h-4 w-5'/>
-						<tittle className="text-xl font-bold">Microblog</tittle>
+						<h1 className="text-xl font-bold">Microblog</h1>
 					</div>  
 				</a>  
 				<div className='items-end text-end h-11'>

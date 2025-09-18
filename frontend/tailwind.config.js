@@ -7,13 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#122117',       // cor de fundo
-        secondary: '#38E07A',     // botoes
-        auth: '#264533',          // botao auth
-        input: '#1C3024',         // inputs
-        quaternary: '#96C4A8',    // letras inputs
-        tertiary: '#366347',      // borda inputs
-        quinternary: '#E5E8EB',   // cor linha header
+        primary: '#122117',       // Cor de fundo
+        secondary: '#38E07A',     // Botões
+        auth: '#264533',          // Botão Auth
+        input: '#1C3024',         // Inputs
+        quaternary: '#96C4A8',    // Letras dos Inputs
+        tertiary: '#366347',      // Borda dos Inputs
+        quinternary: '#E5E8EB',   // Cor da Linha do Header
       }
     },
   },

@@ -36,7 +36,7 @@ export default function PostField({ onPostCreated }) {
       );
 
       setIsTyping(""); 
-      if (onPostCreated) onPostCreated(response.data);
+      
     } catch (err) {
       console.error("Erro ao postar:", err);
       toast.error(err.response?.data?.message || "Erro ao postar");

@@ -4,6 +4,7 @@ import Post from '../components/Post';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { toast } from 'react-toastify';
+import Pusher from 'pusher-js';
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -24,35 +25,59 @@ function HomePage() {
     };
 
     fetchPosts();
-  }, [isLoggedIn]);
+
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+    });
+
+    const channel = pusher.subscribe("posts");
+
+    channel.bind("post.created", (data) => {
+      setPosts(prev => [data.post, ...prev]);
+      toast.success("Novo post recebido");
+    });
+    
+    channel.bind("post.deleted", (data) => {
+      const deletedId = Number(data.post.id);
+      setPosts(prev => prev.filter(p => p.id !== deletedId));
+      toast.error("Um post foi deletado");
+    });
+
+    channel.bind("post.updated", (data) => {
+      const updatedPost = data.post;
+      setPosts(prev =>
+        prev.map(p => p.id === updatedPost.id ? updatedPost : p)
+      );
+      toast.info("Um post foi editado");
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [isLoggedIn, token]);
 
   const handleDelete = async (postId) => {
     try {
       await api.delete(`/posts/${postId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setPosts(prev => prev.filter(post => post.id !== postId));
     } catch (err) {
       console.error("Erro ao apagar post:", err);
       toast.error("Não foi possível apagar o post.");
     }
   };
 
-  const handleEdit = (postId, newContent) => {
-    api.put(`/posts/${postId}`, { conteudo: newContent }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        setPosts(prev =>
-          prev.map(p => (p.id === postId ? { ...p, conteudo: res.data.conteudo } : p))
-        );
-      })
-      .catch(err => {
-        console.error("Erro ao editar post:", err);
-        toast.error("Não foi possível editar o post.");
+  const handleEdit = async (postId, newContent) => {
+    try {
+      await api.put(`/posts/${postId}`, { conteudo: newContent }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+    } catch (err) {
+      console.error("Erro ao editar post:", err);
+      toast.error("Não foi possível editar o post.");
+    }
   };
-
 
   const filteredPosts = posts.filter(post => !post.post_privado || isLoggedIn);
 
