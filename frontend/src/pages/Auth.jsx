@@ -3,9 +3,12 @@ import Input from '../components/Input';
 import AuthSubmitButton from '../components/AuthSubmitButton';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 import api from '../services/api';
+import { toast } from 'react-toastify';
 
 export default function AuthPage() {
+	const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
     nome: "",
@@ -28,15 +31,16 @@ export default function AuthPage() {
       const { token, usuario } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("usuario", JSON.stringify(usuario));
-      alert("Login realizado!");
+      toast.success("Login realizado!");
+			navigate("/");
     } catch (err) {
-      alert(err.response?.data?.message || "Erro ao fazer login");
+      toast.error(err.response?.data?.message || "Erro ao fazer login");
     }
   };
 
   const handleRegister = async () => {
 		if (form.senha !== form.confirmSenha && form.confirmSenha) {
-			return alert("Senhas não conferem!");
+			return toast.error("Senhas não conferem!");
 		}
 		try {
 			await api.post("/usuarios", {
@@ -44,14 +48,14 @@ export default function AuthPage() {
 				email: form.email,
 				senha: form.senha,
 				foto_perfil: null,
+        senha_confirmation: form.confirmSenha,
 			});
-			alert("Registro realizado! Faça login.");
+			toast.success("Registro realizado! Faça login.");
 			setIsLogin(true);
 		} catch (err) {
-			alert(err.response?.data?.message || "Erro ao registrar");
+			toast.error(err.response?.data?.message || "Erro ao registrar");
 		}
 	};
-
 
   const handleSubmit = (e) => {
     e.preventDefault();

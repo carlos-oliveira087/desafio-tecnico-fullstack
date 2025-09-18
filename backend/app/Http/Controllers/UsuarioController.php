@@ -16,9 +16,25 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nome' => 'required|string|max:255',
             'email' => 'required|email|unique:usuarios,email',
-            'senha' => 'required|min:6',
+            'nome' => 'required|string|max:255',
+            'senha' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[0-9]/',         
+                'regex:/[@$!%*#?&]/',
+                'confirmed',
+            ],
+        ], [
+            'email.email' => 'Por favor, insira um email válido.',
+            'email.required' => 'O campo email é obrigatório.',
+            'email.unique' => 'Este email já está cadastrado.',
+            'nome.required' => 'O campo nome é obrigatório.',
+            'senha.required' => 'O campo senha é obrigatório.',
+            'senha.min' => 'A senha deve ter no mínimo 8 caracteres.',
+            'senha.regex' => 'A senha deve conter pelo menos 1 número e 1 caractere especial.',
+            'senha.confirmed' => 'A confirmação de senha não confere.',
         ]);
 
         $usuario = Usuario::create([
@@ -56,8 +72,13 @@ class UsuarioController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'senha' => 'required'
+            'senha' => 'required',     
+        ], [
+            'email.email' => 'Por favor, insira um email válido.',
+            'email.required' => 'O campo email é obrigatório.',
+            'senha.required' => 'O campo senha é obrigatório.',
         ]);
+
 
         $usuario = Usuario::where('email', $request->email)->first();
 

@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        return Post::with('usuario')->get();
+    public function index() {
+        $posts = Post::with('usuario')->orderBy('created_at', 'desc')->get();
+        return response()->json($posts);
     }
+
 
     public function store(Request $request)
     {
@@ -24,6 +25,8 @@ class PostController extends Controller
             'post_privado' => $request->post_privado ?? false,
             'usuario_id' => $request->usuario_id,
         ]);
+
+        $post->load('usuario');
 
         return response()->json($post, 201);
     }
@@ -39,4 +42,19 @@ class PostController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function update(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+
+        if ($post->usuario_id !== $request->user()->id) {
+            return response()->json(['error' => 'Não autorizado'], 403);
+        }
+
+        $post->conteudo = $request->conteudo;
+        $post->save();
+
+        return response()->json($post);
+    }
+
 }
