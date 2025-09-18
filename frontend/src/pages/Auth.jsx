@@ -16,6 +16,7 @@ export default function AuthPage() {
     senha: "",
     confirmSenha: "",
   });
+  const [fotoPerfil, setFotoPerfil] = useState(null);
 
   const handleChange = (e) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,15 +44,21 @@ export default function AuthPage() {
 			return toast.error("Senhas não conferem!");
 		}
 		try {
-			await api.post("/usuarios", {
-				nome: form.nome,
-				email: form.email,
-				senha: form.senha,
-				foto_perfil: null,
-        senha_confirmation: form.confirmSenha,
-			});
+			const formData = new FormData();
+      formData.append("nome", form.nome);
+      formData.append("email", form.email);
+      formData.append("senha", form.senha);
+      formData.append("senha_confirmation", form.confirmSenha);
+      if (fotoPerfil) formData.append("foto_perfil", fotoPerfil);
+
+      await api.post("/usuarios", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+
 			toast.success("Registro realizado! Faça login.");
 			setIsLogin(true);
+      setForm({ nome: "", email: "", senha: "", senha_confirmation: "" });
+      setFotoPerfil(null);
 		} catch (err) {
 			toast.error(err.response?.data?.message || "Erro ao registrar");
 		}
@@ -100,6 +107,13 @@ export default function AuthPage() {
 									<Input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
 									<Input name="senha" type="password" placeholder="Senha" value={form.senha} onChange={handleChange} />
 									<Input name="confirmSenha" type="password" placeholder="Confirmação de senha" value={form.confirmSenha} onChange={handleChange} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFotoPerfil(e.target.files[0])}
+                    className="text-sm text-quaternary"
+                  />
+
                 </motion.div>
               )}
             </AnimatePresence>

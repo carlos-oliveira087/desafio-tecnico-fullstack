@@ -28,4 +28,13 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Post::class, 'usuario_id');
     }
+
+    public function getFotoPerfilAttribute($value)
+    {
+        if ($value) {
+            return asset('storage/' . $value);
+        }
+        return $value ?: 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?d=identicon';
+    }
+
 }

@@ -18,6 +18,7 @@ class UsuarioController extends Controller
         $request->validate([
             'email' => 'required|email|unique:usuarios,email',
             'nome' => 'required|string|max:255',
+            'foto_perfil' => 'nullable|image|max:2048',
             'senha' => [
                 'required',
                 'string',
@@ -37,11 +38,16 @@ class UsuarioController extends Controller
             'senha.confirmed' => 'A confirmação de senha não confere.',
         ]);
 
+        $fotoPath = null;
+        if ($request->hasFile('foto_perfil')) {
+            $fotoPath = $request->file('foto_perfil')->store('usuarios', 'public');
+        }
+
         $usuario = Usuario::create([
             'nome' => $request->nome,
             'email' => $request->email,
             'senha' => bcrypt($request->senha), 
-            'foto_perfil' => $request->foto_perfil ?? null,
+            'foto_perfil' => $fotoPath,
         ]);
 
         return response()->json($usuario, 201);

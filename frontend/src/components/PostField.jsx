@@ -46,17 +46,13 @@ export default function PostField({ onPostCreated }) {
   return (
     <div>
 			<div className="absolute top-[11.8rem] left-[16.5rem]">
-				{userImage ? (
+				
           <img
             className="w-11 h-11 rounded-full object-cover"
             src={userImage}
             alt="Foto de perfil"
           />
-        ) : (
-          <div className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-[2.1rem] text-white">
-            <IoIosPerson />
-          </div>
-        )}
+        
 			</div>
 			<textarea 
 				value={isTyping} 

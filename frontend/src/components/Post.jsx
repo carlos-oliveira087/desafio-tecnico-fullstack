@@ -30,11 +30,7 @@ export default function Post({ id, image, author, content, createdAt, isOwner, o
   return (
     <div className="w-full m-4 p-4 mb-4 shadow-sm relative rounded-xl">
       <div className="flex flex-row items-center mb-2 gap-4">
-        {image ? (
-          <img src={image} alt="Foto de Perfil" className="w-6 h-6 rounded-full object-cover" />
-        ) : (
-          <p className="rounded-full bg-secondary p-1 text-2xl"><IoIosPerson/></p>
-        )}
+        <img src={image} alt="Foto de Perfil" className="w-6 h-6 rounded-full object-cover" />
         <span className="font-bold">{author}</span>
         <span className="text-sm text-quaternary">{getTimeAgo()}</span>
       </div>
