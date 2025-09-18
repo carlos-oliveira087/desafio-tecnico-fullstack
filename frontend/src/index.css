@@ -1,12 +1,6 @@
-@import "tailwindcss/preflight"; 
-@import "tailwindcss/components"; 
-@import "tailwindcss/utilities"; 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-primary: #122117; // cor de fundo
-   --color-secondary: #38E07A; // botoes
-  --color-input: #1C3024; //inputs
-  --color-quaternary: #96C4A8; // letras inputs
-  --color-tertiary: #366347; // borda inputs
-  --color-quinternary: #E5E8EB; // cor linha header
-}
+
+
