@@ -1,6 +1,7 @@
 import Header from '../components/Header';
 import Input from '../components/Input';
 import AuthSubmitButton from '../components/AuthSubmitButton';
+import ImageInput from '../components/ImageInput';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
@@ -107,12 +108,7 @@ export default function AuthPage() {
 									<Input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
 									<Input name="senha" type="password" placeholder="Senha" value={form.senha} onChange={handleChange} />
 									<Input name="confirmSenha" type="password" placeholder="Confirmação de senha" value={form.confirmSenha} onChange={handleChange} />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFotoPerfil(e.target.files[0])}
-                    className="text-sm text-quaternary"
-                  />
+                  <ImageInput fotoPerfil={fotoPerfil} setFotoPerfil={setFotoPerfil} />
 
                 </motion.div>
               )}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 export default function AuthButton() {
   const navigate = useNavigate();
@@ -10,12 +11,22 @@ export default function AuthButton() {
     if (storedUser) setUsuario(JSON.parse(storedUser));
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-    setUsuario(null);
-    navigate('/auth');
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await api.post("/logout", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error("Erro ao fazer logout:", err);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario");
+      setUsuario(null);
+      navigate('/auth');
+    }
   };
+
 
   return (
     <div>

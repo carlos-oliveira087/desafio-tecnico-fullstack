@@ -46,7 +46,7 @@ class PostController extends Controller
 
         event(new PostDeleted($id));
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Post deletado com sucesso'], 200);
     }
 
     public function update(Request $request, $id)

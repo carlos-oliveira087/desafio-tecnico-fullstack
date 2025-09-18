@@ -6,6 +6,9 @@ export default function Header() {
 	const location = useLocation();
 	const isAuthPage = location.pathname === '/auth';
 
+	const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+	const isLoggedIn = !!usuario;
+
 	return (
 		<div>
 			<div className='py-2 px-20 flex flex-row justify-between items-center'>
@@ -15,8 +18,15 @@ export default function Header() {
 						<h1 className="text-xl font-bold">Microblog</h1>
 					</div>  
 				</a>  
-				<div className='items-end text-end h-11'>
+				<div className='flex flex-row gap-6 justify-center items-center text-end h-11'>
 						{!isAuthPage && <AuthButton />}
+						{isLoggedIn && (
+							<img
+								src={usuario.foto_perfil}
+								alt="Foto do usuário"
+								className="w-9 h-9 rounded-full object-cover"
+            />
+          )}
 				</div>
 			</div>
 				
